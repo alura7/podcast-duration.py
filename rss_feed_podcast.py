@@ -1,14 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
-import time
-import sys
 from datetime import  timedelta
 import pandas as pd
 from urllib.parse import urlparse
 
 url = "https://www.geschichte.fm/feed/mp3/"
 
-url2 = 'http://abc.hostname.com/somethings/anything/'
 def url_parse(url):
     try:
         t = urlparse(url).netloc
