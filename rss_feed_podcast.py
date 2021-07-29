@@ -4,8 +4,6 @@ from datetime import  timedelta
 import pandas as pd
 from urllib.parse import urlparse
 
-url = "https://www.geschichte.fm/feed/mp3/"
-
 def url_parse(url):
     try:
         t = urlparse(url).netloc
@@ -17,19 +15,24 @@ def url_parse(url):
         name = "none"
     return name
 
-def podcast_rssFeed_csv(url):
+
+def soup_url(url):
     try: 
         rss_feed = url
         response = requests.get(rss_feed)
-        scrape = BeautifulSoup(response.content, features="xml")
-        scrape.prettify()
+        soup = BeautifulSoup(response.content, features="xml")
+        soup.prettify()
     except Exception as e:
         print("scraping failed")
         print(e)
+    return soup
+        
+def podcast_rssFeed_csv(url):
+    try: 
+        soup = soup_url(url)
+        items = soup.findAll('item')
 #  each item tag contains - title, link, pubDate, guid, description, post-id, itunes:duration, itunes:author,
 #itunes:subtitle, itunes:episode, itunes:episodeType, itunes:summary, content:encoded
-    try: 
-        items = scrape.findAll('item')
         new_itemsList = []
         for item in items:
             items_list = {}
@@ -47,15 +50,10 @@ def podcast_rssFeed_csv(url):
     except Exception as e:
         print(e)
 
-def how_long(rss_url):
-    try: 
-        response = requests.get(rss_url)
-        scrape = BeautifulSoup(response.content, features="xml")
-        scrape.prettify()
-    except Exception as e:
-        print(e)
+def bing_watch_potential(rss_url):
     try:
-        durations = scrape.findAll('itunes:duration')
+        soup = soup_url(rss_url)
+        durations = soup.findAll('itunes:duration')
         durations_list =[]
         for duration in durations:
             durations_list.append(duration.text)
@@ -82,7 +80,6 @@ def how_long(rss_url):
                 print(e)
     except Exception as e:
         print(e)
-    
 
 how_long("https://servusgruezihallo.podigee.io/feed/mp3")
 podcast_rssFeed_csv("https://servusgruezihallo.podigee.io/feed/mp3")
