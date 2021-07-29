@@ -81,5 +81,5 @@ def bing_watch_potential(rss_url):
     except Exception as e:
         print(e)
 
-how_long("https://servusgruezihallo.podigee.io/feed/mp3")
+bing_watch_potential("https://servusgruezihallo.podigee.io/feed/mp3")
 podcast_rssFeed_csv("https://servusgruezihallo.podigee.io/feed/mp3")
