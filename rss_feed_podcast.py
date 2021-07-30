@@ -2,19 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import  timedelta
 import pandas as pd
-from urllib.parse import urlparse
-
-def url_parse(url):
-    try:
-        t = urlparse(url).netloc
-        print ('.'.join(t.split('.')[1:]))
-        name = '.'.join(t.split('.')[1:])
-        
-    except Exception as e:
-        print(e)
-        name = "none"
-    return name
-
 
 def soup_url(url):
     try: 
@@ -28,11 +15,11 @@ def soup_url(url):
     return soup
         
 def podcast_rssFeed_csv(url):
+#  each item tag contains - title, link, pubDate, guid, description, post-id, itunes:duration, itunes:author,
+#itunes:subtitle, itunes:episode, itunes:episodeType, itunes:summary, content:encoded
     try: 
         soup = soup_url(url)
         items = soup.findAll('item')
-#  each item tag contains - title, link, pubDate, guid, description, post-id, itunes:duration, itunes:author,
-#itunes:subtitle, itunes:episode, itunes:episodeType, itunes:summary, content:encoded
         new_itemsList = []
         for item in items:
             items_list = {}
@@ -45,8 +32,11 @@ def podcast_rssFeed_csv(url):
             new_itemsList.append(items_list)
 
         df = pd.DataFrame(new_itemsList, columns = ['title','link','description','pubDate','duration','author'])
-        csv_name = url_parse(url) 
-        return df.to_csv('%s.csv'%(csv_name), index = False, encoding= 'utf-8')
+        try:    
+            title = soup.find('title').text
+            return df.to_csv('%s.csv'%(title), index = False, encoding= 'utf-8')
+        except Exception as e:
+            print(e)
     except Exception as e:
         print(e)
 
